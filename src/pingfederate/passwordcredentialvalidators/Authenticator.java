@@ -27,6 +27,24 @@ public class Authenticator implements PasswordCredentialValidator{
     private static final String USERNAME = "username";
     private String authenticationURL = "";
 
+    /*    Creates a textfield for the authentication service URL in the Admin UI */
+    @Override
+    public PluginDescriptor getPluginDescriptor() {
+       GuiConfigDescriptor guiDescriptor = new GuiConfigDescriptor();
+       TextFieldDescriptor authServiceURLTextField = new TextFieldDescriptor(authServiceURLLabel, authServiceURLDescription);
+       guiDescriptor.addField(authServiceURLTextField);
+       PluginDescriptor pluginDescriptor = new PluginDescriptor(buildName(), this, guiDescriptor);
+       // Below will make the attributes available in the input Userid mapping in the composite adapter If this is used inside the composite adapter.
+       pluginDescriptor.setAttributeContractSet(Collections.singleton(USERNAME));
+       return pluginDescriptor;
+    }
+   
+    /* Get all the configured values in the PingFed admin e.g. Service URL */
+    @Override
+    public void configure(Configuration configuration) {
+       this.authenticationURL = configuration.getFieldValue(authServiceURLLabel);
+    }
+    
     @Override
     public AttributeMap processPasswordCredential(String userName, String password) throws PasswordValidationException {
        AttributeMap attributeMap = new AttributeMap();
@@ -42,27 +60,7 @@ public class Authenticator implements PasswordCredentialValidator{
        
        return attributeMap;
     }
-
- 
-    /* Get all the configured values in the PingFed admin e.g. Service URL */
-    @Override
-    public void configure(Configuration configuration) {
-       this.authenticationURL = configuration.getFieldValue(authServiceURLLabel);
-    }
-
-    /*    Creates a textfield for the authentication service URL in the Admin UI */
-    @Override
-    public PluginDescriptor getPluginDescriptor() {
-       GuiConfigDescriptor guiDescriptor = new GuiConfigDescriptor();
-       TextFieldDescriptor authServiceURLTextField = new TextFieldDescriptor(authServiceURLLabel, authServiceURLDescription);
-       guiDescriptor.addField(authServiceURLTextField);
-       PluginDescriptor pluginDescriptor = new PluginDescriptor(buildName(), this, guiDescriptor);
-       // Below will make the attributes available in the input Userid mapping in the composite adapter If this is used inside the composite adapter.
-       pluginDescriptor.setAttributeContractSet(Collections.singleton(USERNAME));
-       return pluginDescriptor;
-    }
-    
-    
+      
     private String buildName() {
         
         return "Custom password credential validator";
