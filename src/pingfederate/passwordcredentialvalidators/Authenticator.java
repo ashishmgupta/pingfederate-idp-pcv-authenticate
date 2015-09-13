@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package pingfederate.passwordcredentialvalidators;
 
 import com.pingidentity.sdk.GuiConfigDescriptor;
@@ -18,23 +13,28 @@ import org.sourceid.util.log.AttributeMap;
 
 /**
  *
- * @author asgupta
+ * @author Ashish Gupta
  */
 public class Authenticator implements PasswordCredentialValidator{
     
-    private static final String authServiceURLLabel = "Authentication service URL";
-    private static final String authServiceURLDescription = "The URL of the service which validates user's credentials";
+    private static final String authServiceURLLabel 
+            = "Authentication service URL";
+    private static final String authServiceURLDescription 
+            = "The URL of the service which validates user's credentials";
     private static final String USERNAME = "username";
     private String authenticationURL = "";
 
-    /*    Creates a textfield for the authentication service URL in the Admin UI */
+    /*Creates a textfield for the authentication service URL in the Admin UI */
     @Override
     public PluginDescriptor getPluginDescriptor() {
        GuiConfigDescriptor guiDescriptor = new GuiConfigDescriptor();
-       TextFieldDescriptor authServiceURLTextField = new TextFieldDescriptor(authServiceURLLabel, authServiceURLDescription);
+       TextFieldDescriptor authServiceURLTextField = new TextFieldDescriptor
+        (authServiceURLLabel, authServiceURLDescription);
        guiDescriptor.addField(authServiceURLTextField);
-       PluginDescriptor pluginDescriptor = new PluginDescriptor(buildName(), this, guiDescriptor);
-       // Below will make the attributes available in the input Userid mapping in the composite adapter If this is used inside the composite adapter.
+       PluginDescriptor pluginDescriptor = new PluginDescriptor
+        (buildName(), this, guiDescriptor);
+       /* Below will make the attributes available in the input Userid mapping 
+       in the composite adapter If this is used inside the composite adapter.*/
        pluginDescriptor.setAttributeContractSet(Collections.singleton(USERNAME));
        return pluginDescriptor;
     }
@@ -46,18 +46,21 @@ public class Authenticator implements PasswordCredentialValidator{
     }
     
     @Override
-    public AttributeMap processPasswordCredential(String userName, String password) throws PasswordValidationException {
+    public AttributeMap processPasswordCredential
+        (String userName, String password) throws PasswordValidationException 
+    {
        AttributeMap attributeMap = new AttributeMap();
        if(!AuthHelper.IsUserAuthenticated(this.authenticationURL, userName, password))
        {
-           throw new PasswordCredentialValidatorAuthnException(false, "authn.srvr.msg.invalid.credentials");
+           throw new PasswordCredentialValidatorAuthnException
+        (false, "authn.srvr.msg.invalid.credentials");
        }
        else
        {
-          // The username value put here will be avilable to the next adapter in teh composite adapter chain
+          /* The username value put here will be avilable to the next adapter 
+           in the composite adapter chain*/
           attributeMap.put(USERNAME, new AttributeValue(userName));
        }
-       
        return attributeMap;
     }
       
@@ -69,7 +72,6 @@ public class Authenticator implements PasswordCredentialValidator{
         return plugin.getImplementationTitle();//+ " " + plugin.getImplementationVersion();         
         */
     }
-    
 }
 
 
